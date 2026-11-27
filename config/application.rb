@@ -20,6 +20,9 @@ Bundler.require(*Rails.groups)
 
 module Wordspeltwrong
   class Application < Rails::Application
+    # Use SQL (not Ruby) for the schema so Postgres-specific features are preserved.
+    config.active_record.schema_format = :sql
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
 
