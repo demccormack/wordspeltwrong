@@ -38,3 +38,7 @@ CI (GitHub Actions) runs all of the above on every pull request.
 - Tokens and component classes (`btn-primary`, `card`, `notification`): `app/assets/tailwind/application.css`
 - Partials: `app/views/components/` (`button`, `card`, `notification`, `celebration`)
 - Confetti: `celebration` Stimulus controller (respects reduced motion)
+
+## Dependency updates
+
+Dependabot opens weekly PRs for gems and GitHub Actions; patch and minor updates auto-merge once required checks pass. Major updates, Ruby, Turbo and Stimulus are reviewed by hand, and Rails only auto-merges patch releases (minor/major upgrades follow the Rails upgrade guide). Vendored importmap packages (e.g. canvas-confetti) are not tracked by Dependabot; a weekly workflow runs `bin/importmap outdated` and opens an issue.
