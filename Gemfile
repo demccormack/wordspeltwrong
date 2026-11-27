@@ -55,6 +55,6 @@ end
 gem "rspec-rails", "~> 8.1", groups: %i[ development test ]
 
 gem "capybara", "~> 3.40", group: :test
-gem "selenium-webdriver", "~> 4.44", group: :test
+gem "selenium-webdriver", "~> 4.53", group: :test
 
 gem "annotaterb", "~> 4.26", group: :development
