@@ -11,7 +11,33 @@ jobs:
       - name: Dependabot metadata
         id: dependabot-metadata
         uses: dependabot/fetch-metadata@v3
+      - name: Decide whether to auto-merge
+        id: decide
+        env:
+          UPDATE_TYPE: ${{ steps.dependabot-metadata.outputs.update-type }}
+          DEPENDENCY_NAMES: ${{ steps.dependabot-metadata.outputs.dependency-names }}
+        run: |
+          # Major updates are always hand-reviewed.
+          # Ruby, Turbo and Stimulus are hand-reviewed until test coverage is proven.
+          # The Rails family only auto-merges patch releases: minor and major
+          # upgrades should follow the Rails upgrade guide.
+          auto=true
+          if [ "$UPDATE_TYPE" = "version-update:semver-major" ]; then
+            auto=false
+          fi
+          IFS=',' read -ra names <<< "$DEPENDENCY_NAMES"
+          for name in "${names[@]}"; do
+            name="${name// /}"
+            case "$name" in
+              ruby|turbo-rails|stimulus-rails|@hotwired/*) auto=false ;;
+              rails|railties|actioncable|actionmailbox|actionmailer|actionpack|actiontext|actionview|activejob|activemodel|activerecord|activestorage|activesupport)
+                [ "$UPDATE_TYPE" = "version-update:semver-patch" ] || auto=false ;;
+            esac
+          done
+          echo "auto=$auto" >> "$GITHUB_OUTPUT"
+          echo "Update type: $UPDATE_TYPE; dependencies: $DEPENDENCY_NAMES; auto-merge: $auto"
       - name: Enable auto-merge for Dependabot PRs
+        if: ${{ steps.decide.outputs.auto == 'true' }}
         run: gh pr merge --auto --rebase "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}

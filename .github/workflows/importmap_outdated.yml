@@ -1,0 +1,62 @@
+name: Importmap outdated
+on:
+  schedule:
+    # Thursdays 02:00 UTC (15:00 in Auckland during daylight saving)
+    - cron: "0 2 * * 4"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  outdated:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Check for outdated JavaScript packages
+        id: check
+        run: |
+          bin/importmap outdated | tee outdated.txt
+          if grep -q "No outdated packages found" outdated.txt; then
+            echo "outdated=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "outdated=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open or update an issue
+        if: ${{ steps.check.outputs.outdated == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          label="importmap-outdated"
+          gh label create "$label" --description "Outdated importmap JavaScript packages" --color FBCA04 || true
+          {
+            echo "Some pinned JavaScript packages are outdated:"
+            echo
+            echo '```'
+            cat outdated.txt
+            echo '```'
+            echo
+            echo 'Update with `bin/importmap pin <package>`, then run the tests (including the system tests) before merging.'
+          } > body.md
+          existing=$(gh issue list --label "$label" --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue edit "$existing" --body-file body.md
+          else
+            gh issue create --title "Outdated importmap packages" --label "$label" --assignee demccormack --body-file body.md
+          fi
+
+      - name: Close the issue when everything is up to date
+        if: ${{ steps.check.outputs.outdated == 'false' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for n in $(gh issue list --label importmap-outdated --state open --json number --jq '.[].number'); do
+            gh issue close "$n" --comment "All importmap packages are up to date."
+          done
