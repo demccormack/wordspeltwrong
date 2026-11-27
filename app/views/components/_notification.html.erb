@@ -1,0 +1,5 @@
+<%# locals: (message:, kind: :info) -%>
+<div class="notification mb-4" role="<%= kind.to_s == "alert" ? "alert" : "status" %>">
+  <span aria-hidden="true">✨</span>
+  <p><%= message %></p>
+</div>

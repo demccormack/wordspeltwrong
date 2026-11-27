@@ -1,0 +1,3 @@
+<% flash.each do |type, message| %>
+  <%= render "components/notification", message: message, kind: type %>
+<% end %>

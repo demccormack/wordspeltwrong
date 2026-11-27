@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en-GB" class="scroll-smooth">
+  <head>
+    <title><%= content_for(:title) || "wordspeltwrong.io" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="wordspeltwrong.io: 1% flatter every day.">
+    <meta name="application-name" content="wordspeltwrong.io">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-linear-to-b from-brand-50 to-white font-sans text-slate-900 antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
+    <%= render "shared/header" %>
+    <main id="main" class="mx-auto w-full max-w-5xl px-5 py-10 sm:py-16">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+    <%= render "shared/footer" %>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+<%# locals: (message:, auto: true) -%>
+<div data-controller="celebration" data-celebration-auto-value="<%= auto %>" class="text-center">
+  <p class="gradient-text text-2xl font-extrabold"><%= message %></p>
+  <button type="button" class="btn-secondary mt-4" data-action="celebration#fire">Celebrate again</button>
+</div>

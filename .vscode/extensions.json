@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "Shopify.ruby-lsp",
+    "bradlc.vscode-tailwindcss",
+    "rebornix.ruby",
+    "esbenp.prettier-vscode",
+    "editorconfig.editorconfig"
+  ]
+}
