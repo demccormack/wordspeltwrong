@@ -1,12 +1,26 @@
 version: 2
 updates:
-- package-ecosystem: bundler
-  directory: "/"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 10
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 10
+  - package-ecosystem: bundler
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: thursday
+      time: "15:00"
+      timezone: Pacific/Auckland
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    assignees:
+      - demccormack
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: thursday
+      time: "15:00"
+      timezone: Pacific/Auckland
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    assignees:
+      - demccormack
