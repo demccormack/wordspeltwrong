@@ -13,15 +13,27 @@ RSpec.describe "Landing page", type: :system do
     expect(page).to have_content("No account. No email.")
   end
 
-  it "completes onboarding anonymously and keeps the profile in this browser" do
+  it "asks one question at a time and keeps the personalised profile in this browser" do
     visit root_path
 
     click_button "✨ Get started ✨"
     fill_in "Your preferred name", with: "Taylor"
     click_button "Continue to alignment"
-    expect(page).to have_content("How many years of experience do you have being yourself?")
+    expect(page).to have_content("Taylor, we're so glad you're here.")
+    expect(page).to have_field("How many years of experience do you have being yourself?", visible: true)
+    expect(page).to have_field("Your relationship with innovation?", visible: false)
     select "6–10 years", from: "How many years of experience do you have being yourself?"
+    click_button "Continue →"
+    expect(page).to have_content("Thanks for sharing that with us, it means a lot.")
+    expect(page).to have_field("Your relationship with innovation?", visible: true)
+    expect(page).to have_field("Preferred level of organisational flatness?", visible: false)
     select "Innovation is a mindset (and a slide deck)", from: "Your relationship with innovation?"
+    click_button "Continue →"
+    expect(page).to have_field("Preferred level of organisational flatness?", visible: true)
+    select "Strategically pancake-adjacent", from: "Preferred level of organisational flatness?"
+    click_button "Continue →"
+    expect(page).to have_field("Where do you see yourself in the next five sprints?", visible: true)
+    select "Disrupting my own assumptions", from: "Where do you see yourself in the next five sprints?"
     click_button "✨ Align me with the organisation ✨"
     expect(page).to have_content("Welcome, Taylor")
     expect(page).to have_content("Founding Stakeholder")
@@ -61,6 +73,11 @@ RSpec.describe "Landing page", type: :system do
     visit root_path
     click_button "✨ Get started ✨"
     click_button "Continue anonymously"
+    expect(page).to have_content("We're so glad you're here.")
+    click_button "Continue →"
+    expect(page).to have_content("Thanks for sharing that with us, it means a lot.")
+    click_button "Continue →"
+    click_button "Continue →"
     click_button "✨ Align me with the organisation ✨"
 
     expect(page).to have_content("Welcome, Stakeholder")

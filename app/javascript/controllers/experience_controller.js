@@ -18,7 +18,8 @@ export default class extends Controller {
     "screen", "nameInput", "yearsInput", "innovationInput", "flatnessInput", "sprintsInput",
     "greeting", "flatnessValue", "flatnessBar", "flatnessFill", "meetingsValue", "notification",
     "notifications", "achievements", "achievementCount", "profileName", "role", "profileYears",
-    "profileInnovation", "profileFlatness", "profileSprints"
+    "profileInnovation", "profileFlatness", "profileSprints", "questionStage", "questionNumber",
+    "questionProgress", "questionProgressFill", "welcomeName", "questionContinue"
   ]
 
   connect() {
@@ -40,24 +41,45 @@ export default class extends Controller {
   continueOnboarding(event) {
     event.preventDefault()
     this.pendingName = this.nameInputTarget.value.trim().slice(0, 40)
-    this.showScreen("questions")
+    this.startQuestions()
   }
 
   continueAnonymously() {
     this.pendingName = ""
-    this.showScreen("questions")
+    this.startQuestions()
   }
 
-  finishOnboarding(event) {
+  startQuestions() {
+    this.answers = {}
+    this.questionIndex = 0
+    this.welcomeNameTarget.textContent = this.pendingName
+      ? `${this.pendingName}, we're so glad you're here.`
+      : "We're so glad you're here."
+    this.showScreen("questions")
+    this.showQuestion()
+  }
+
+  answerQuestion(event) {
     event.preventDefault()
+    const fields = ["yearsExperience", "innovation", "flatnessPreference", "fiveSprints"]
+    const targets = [this.yearsInputTarget, this.innovationInputTarget, this.flatnessInputTarget, this.sprintsInputTarget]
+    this.answers[fields[this.questionIndex]] = targets[this.questionIndex].value
+
+    if (this.questionIndex < fields.length - 1) {
+      this.questionIndex += 1
+      this.showQuestion()
+      return
+    }
+
+    this.finishOnboarding()
+  }
+
+  finishOnboarding() {
     this.state = VisitorStore.create()
     this.state.onboardingComplete = true
     this.state.profile = {
       firstName: this.pendingName || "",
-      yearsExperience: this.yearsInputTarget.value,
-      innovation: this.innovationInputTarget.value,
-      flatnessPreference: this.flatnessInputTarget.value,
-      fiveSprints: this.sprintsInputTarget.value
+      ...this.answers
     }
     this.state.achievements = ["founding-stakeholder"]
     this.addNotification("Welcome aboard. Your role is Founding Stakeholder; your reporting line is still under review.")
@@ -104,6 +126,20 @@ export default class extends Controller {
     this.screenTargets.forEach((screen) => {
       screen.hidden = screen.dataset.experienceScreenName !== name
     })
+  }
+
+  showQuestion() {
+    this.questionStageTargets.forEach((stage, index) => {
+      stage.hidden = index !== this.questionIndex
+    })
+    const step = this.questionIndex + 2
+    const progress = step * 20
+    this.questionNumberTarget.textContent = `Step ${step} of 5`
+    this.questionProgressTarget.setAttribute("aria-valuenow", progress)
+    this.questionProgressFillTarget.style.width = `${progress}%`
+    this.questionContinueTarget.textContent = this.questionIndex === this.questionStageTargets.length - 1
+      ? "✨ Align me with the organisation ✨"
+      : "Continue →"
   }
 
   addNotification(message) {
