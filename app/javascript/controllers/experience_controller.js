@@ -96,6 +96,7 @@ export default class extends Controller {
   reset() {
     VisitorStore.reset()
     this.state = VisitorStore.create()
+    this.element.querySelectorAll("form").forEach((form) => form.reset())
     this.showScreen("welcome")
   }
 
