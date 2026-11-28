@@ -13,7 +13,6 @@ const emptyState = (now = new Date()) => ({
   },
   progress: {
     establishedAt: now.toISOString(),
-    legacyFlattenings: 0,
     flattenings: [],
     observedEntropy: 0,
     meetingsAvoided: 0,
@@ -48,8 +47,6 @@ const validState = (state) =>
   state.progress &&
   typeof state.progress.establishedAt === "string" &&
   Number.isFinite(Date.parse(state.progress.establishedAt)) &&
-  Number.isSafeInteger(state.progress.legacyFlattenings) &&
-  state.progress.legacyFlattenings >= 0 &&
   Array.isArray(state.progress.flattenings) &&
   state.progress.flattenings.every(
     (event) =>
@@ -84,26 +81,6 @@ export const VisitorStore = {
       const raw = storage.getItem(STORAGE_KEY);
       if (!raw) return null;
       const state = JSON.parse(raw);
-      if (state?.version === 1 && state.progress) {
-        const old = state.progress;
-        if (
-          !Number.isInteger(old.flatness) ||
-          old.flatness < 0 ||
-          old.flatness > 100 ||
-          !Number.isInteger(old.meetingsAvoided) ||
-          old.meetingsAvoided < 0
-        )
-          return null;
-        state.version = CURRENT_VERSION;
-        state.progress = {
-          ...emptyState().progress,
-          legacyFlattenings: Math.max(old.flatness - 73, old.meetingsAvoided),
-          meetingsAvoided: old.meetingsAvoided,
-        };
-        if (validState(state) && !this.save(state)) {
-          Object.defineProperty(state, "migrationPending", { value: true });
-        }
-      }
       if (!validState(state)) {
         storage.removeItem(STORAGE_KEY);
         return null;

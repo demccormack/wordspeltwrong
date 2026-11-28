@@ -14,9 +14,7 @@ export function entropyCount(establishedAt, now = Date.now()) {
 
 export function effectiveCount(progress, now = Date.now()) {
   return (
-    progress.legacyFlattenings +
-    progress.flattenings.length -
-    entropyCount(progress.establishedAt, now)
+    progress.flattenings.length - entropyCount(progress.establishedAt, now)
   );
 }
 

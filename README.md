@@ -40,11 +40,6 @@ bin/importmap audit   # JS vulnerabilities
 CI (GitHub Actions) runs these checks on every pull request. The standalone
 flatness tests additionally require Node.
 
-Existing version 1 browser profiles retain their previous flattening count when
-upgraded. Their original establishment date and individual action dates were
-not recorded, so the entropy cycle begins at migration and earlier actions are
-retained as an undated opening balance.
-
 ## Editor
 
 `.vscode/` contains recommended extensions and settings (auto-save on focus change, format and lint on save). Prettier formats JavaScript, JSON and Markdown; RuboCop formats Ruby.

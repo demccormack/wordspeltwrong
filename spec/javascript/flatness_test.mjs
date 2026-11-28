@@ -17,7 +17,6 @@ import { VisitorStore } from "../../app/javascript/lib/visitor_store.js";
 const start = Date.parse("2026-01-01T12:00:00Z");
 const progress = () => ({
   establishedAt: new Date(start).toISOString(),
-  legacyFlattenings: 0,
   flattenings: [],
   observedEntropy: 0,
   meetingsAvoided: 0,
@@ -90,7 +89,7 @@ test("daily restriction and classifications", () => {
   }
 });
 
-test("visitor state persists and migrates legacy progress", () => {
+test("visitor state persists, rejects incompatible state and resets", () => {
   let saved;
   globalThis.window = {
     localStorage: {
@@ -105,6 +104,7 @@ test("visitor state persists and migrates legacy progress", () => {
   };
   const state = VisitorStore.create(new Date(start));
   state.onboardingComplete = true;
+  assert.equal(effectiveCount(state.progress, start), 0);
   state.progress.flattenings.push({
     at: new Date(start).toISOString(),
     day: localDay(new Date(start)),
@@ -112,19 +112,17 @@ test("visitor state persists and migrates legacy progress", () => {
   state.progress.observedEntropy = 2;
   assert.ok(VisitorStore.save(state));
   assert.deepEqual(VisitorStore.load(), state);
+  assert.equal(effectiveCount(VisitorStore.load().progress, start), 1);
   state.version = 1;
   state.progress = { flatness: 75, meetingsAvoided: 2 };
   saved = JSON.stringify(state);
-  const migrated = VisitorStore.load();
-  assert.equal(migrated.version, 2);
-  assert.equal(migrated.progress.legacyFlattenings, 2);
-  assert.deepEqual(VisitorStore.load(), migrated);
-  state.version = 1;
-  saved = JSON.stringify(state);
+  assert.equal(VisitorStore.load(), null);
+  assert.equal(saved, null);
+  assert.ok(VisitorStore.save(VisitorStore.create(new Date(start))));
+  VisitorStore.reset();
+  assert.equal(VisitorStore.load(), null);
   window.localStorage.setItem = () => {
     throw new Error("storage unavailable");
   };
-  assert.equal(VisitorStore.load().migrationPending, true);
-  VisitorStore.reset();
-  assert.equal(VisitorStore.load(), null);
+  assert.equal(VisitorStore.save(VisitorStore.create(new Date(start))), false);
 });

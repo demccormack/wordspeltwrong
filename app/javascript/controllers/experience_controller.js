@@ -67,12 +67,7 @@ export default class extends Controller {
 
   connect() {
     this.state = VisitorStore.load() || VisitorStore.create();
-    this.storageFailed = Boolean(this.state.migrationPending);
-    if (this.storageFailed) {
-      this.addNotification(
-        "Your progress could not be saved in this browser and may be lost when you leave.",
-      );
-    }
+    this.storageFailed = false;
     if (this.state.onboardingComplete) {
       this.renderProfile();
       this.renderDashboard();
@@ -293,9 +288,7 @@ export default class extends Controller {
     const count = entropyCount(progress.establishedAt, now);
     if (count > progress.observedEntropy) {
       const previous = classification(
-        progress.legacyFlattenings +
-          progress.flattenings.length -
-          progress.observedEntropy,
+        progress.flattenings.length - progress.observedEntropy,
       );
       const current = classification(effectiveCount(progress, now));
       this.addNotification(
