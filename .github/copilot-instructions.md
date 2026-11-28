@@ -168,6 +168,8 @@ Keep account-related email separate from marketing consent. No newsletter subscr
 - Inspect the existing code and conventions before editing. Reuse abstractions where they exist; do not prematurely generalise.
 - Keep business logic separate from presentation and persistence where useful. Prefer readable, idiomatic Rails and JavaScript.
 - Write tests alongside functionality. Test user-visible behaviour rather than implementation details where practical.
+- Format JavaScript, JSON and Markdown with Prettier (default options, as configured in `.vscode/settings.json`) and Ruby with RuboCop. Do not hand-format these files in another style, so diffs stay small.
+- When adding or editing a GitHub Actions workflow, look up and use the latest major version of every action (for example with `gh api repos/<owner>/<action>/releases/latest`) rather than guessing.
 - Run relevant tests and lint checks before declaring work complete. Report what was actually run, failures, blockers and assumptions.
 - Do not commit secrets, provision paid resources, deploy publicly, send real emails, enable live AI billing or make irreversible external changes without explicit approval.
 - Ask before introducing major dependencies, changing architecture, making licensing decisions or expanding scope substantially.

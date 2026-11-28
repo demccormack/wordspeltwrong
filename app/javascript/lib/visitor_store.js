@@ -1,5 +1,5 @@
-export const STORAGE_KEY = "wordspeltwrong.visitor"
-export const CURRENT_VERSION = 1
+export const STORAGE_KEY = "wordspeltwrong.visitor";
+export const CURRENT_VERSION = 1;
 
 const emptyState = () => ({
   version: CURRENT_VERSION,
@@ -9,20 +9,20 @@ const emptyState = () => ({
     yearsExperience: "",
     innovation: "",
     flatnessPreference: "",
-    fiveSprints: ""
+    fiveSprints: "",
   },
   progress: { flatness: 73, meetingsAvoided: 0 },
   achievements: [],
-  notifications: []
-})
+  notifications: [],
+});
 
 const availableStorage = () => {
   try {
-    return window.localStorage
+    return window.localStorage;
   } catch {
-    return null
+    return null;
   }
-}
+};
 
 const validState = (state) =>
   state &&
@@ -50,58 +50,61 @@ const validState = (state) =>
   state.achievements.every((achievement) => typeof achievement === "string") &&
   Array.isArray(state.notifications) &&
   state.notifications.length <= 4 &&
-  state.notifications.every((notification) => typeof notification === "string" && notification.length <= 250)
+  state.notifications.every(
+    (notification) =>
+      typeof notification === "string" && notification.length <= 250,
+  );
 
 export const VisitorStore = {
   create: emptyState,
 
   load() {
-    const storage = availableStorage()
-    if (!storage) return null
+    const storage = availableStorage();
+    if (!storage) return null;
 
     try {
-      const raw = storage.getItem(STORAGE_KEY)
-      if (!raw) return null
+      const raw = storage.getItem(STORAGE_KEY);
+      if (!raw) return null;
       if (raw.length > 10_000) {
-        storage.removeItem(STORAGE_KEY)
-        return null
+        storage.removeItem(STORAGE_KEY);
+        return null;
       }
 
-      const state = JSON.parse(raw)
+      const state = JSON.parse(raw);
       if (!validState(state)) {
-        storage.removeItem(STORAGE_KEY)
-        return null
+        storage.removeItem(STORAGE_KEY);
+        return null;
       }
 
-      return state
+      return state;
     } catch {
       try {
-        storage.removeItem(STORAGE_KEY)
+        storage.removeItem(STORAGE_KEY);
       } catch {
-        return null
+        return null;
       }
-      return null
+      return null;
     }
   },
 
   save(state) {
-    const storage = availableStorage()
-    if (!storage || !validState(state)) return false
+    const storage = availableStorage();
+    if (!storage || !validState(state)) return false;
 
     try {
-      storage.setItem(STORAGE_KEY, JSON.stringify(state))
-      return true
+      storage.setItem(STORAGE_KEY, JSON.stringify(state));
+      return true;
     } catch {
-      return false
+      return false;
     }
   },
 
   reset() {
     try {
-      availableStorage()?.removeItem(STORAGE_KEY)
+      availableStorage()?.removeItem(STORAGE_KEY);
     } catch {
-      return false
+      return false;
     }
-    return true
-  }
-}
+    return true;
+  },
+};
