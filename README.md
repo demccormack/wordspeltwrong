@@ -1,6 +1,14 @@
 # wordspeltwrong.io
 
-Satire as a Service. _1% flatter every day._
+<div align="center">
+
+<h2>Fully functional.<br>Completely useless.</h2>
+
+<h3>Enterprise-grade software for the achievement of absolutely nothing.</h3>
+
+<h3><em>✨ 1% flatter every day. ✨</em></h3>
+
+</div>
 
 Rails 8.1 monolith with PostgreSQL, Hotwire (Turbo + Stimulus), Tailwind CSS and importmaps (no Node required).
 
