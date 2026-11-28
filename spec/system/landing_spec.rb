@@ -34,8 +34,8 @@ RSpec.describe "Landing page", type: :system do
     select "Strategically pancake-adjacent", from: "Preferred level of organisational flatness?"
     click_button "Continue →"
     expect(page).to have_css("h1.text-4xl", text: "We appreciate your commitment to a flatter future.")
-    expect(page).to have_field("Where do you see yourself in the next five sprints?", visible: true)
-    select "Disrupting my own assumptions", from: "Where do you see yourself in the next five sprints?"
+    expect(page).to have_field("What is your favourite weather?", visible: true)
+    select "Sunny with scattered stakeholders", from: "What is your favourite weather?"
     click_button "✨ Align me with the organisation ✨"
     expect(page).to have_content("Welcome, Taylor")
     expect(page).to have_content("Founding Stakeholder")
