@@ -24,16 +24,16 @@ RSpec.describe "Landing page", type: :system do
     expect(page).to have_field("Your relationship with innovation?", visible: false)
     select "6–10 years", from: "How many years of experience do you have being yourself?"
     click_button "Continue →"
-    expect(page).to have_css("h1.text-4xl", text: "Thank you for trusting us with your personal operating history.")
+    expect(page).to have_css("h1.text-3xl", text: "Thank you for trusting us, it means a lot.")
     expect(page).to have_field("Your relationship with innovation?", visible: true)
     expect(page).to have_field("Preferred level of organisational flatness?", visible: false)
     select "Innovation is a mindset (and a slide deck)", from: "Your relationship with innovation?"
     click_button "Continue →"
-    expect(page).to have_css("h1.text-4xl", text: "That means a lot. We'll take it from here, together.")
+    expect(page).to have_css("h1.text-3xl", text: "We'll take it from here, together.")
     expect(page).to have_field("Preferred level of organisational flatness?", visible: true)
     select "Strategically pancake-adjacent", from: "Preferred level of organisational flatness?"
     click_button "Continue →"
-    expect(page).to have_css("h1.text-4xl", text: "We appreciate your commitment to a flatter future.")
+    expect(page).to have_css("h1.text-3xl", text: "We love your commitment to a flatter future.")
     expect(page).to have_field("What is your favourite weather?", visible: true)
     select "Sunny with scattered stakeholders", from: "What is your favourite weather?"
     click_button "✨ Align me with the organisation ✨"
@@ -77,7 +77,7 @@ RSpec.describe "Landing page", type: :system do
     click_button "Continue anonymously"
     expect(page).to have_content("We're so glad you're here.")
     click_button "Continue →"
-    expect(page).to have_css("h1.text-4xl", text: "Thank you for trusting us with your personal operating history.")
+    expect(page).to have_css("h1.text-3xl", text: "Thank you for trusting us, it means a lot.")
     click_button "Continue →"
     click_button "Continue →"
     click_button "✨ Align me with the organisation ✨"
