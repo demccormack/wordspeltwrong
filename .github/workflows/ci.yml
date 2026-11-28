@@ -80,7 +80,7 @@ jobs:
         run: npx --yes prettier@3 --check "app/javascript/**/*.js" ".vscode/*.json" "*.md" ".github/**/*.md"
 
       - name: Test flatness and visitor persistence
-        run: node --experimental-default-type=module --test spec/javascript/flatness_test.mjs
+        run: node --test spec/javascript/flatness_test.mjs
 
   test:
     runs-on: ubuntu-latest

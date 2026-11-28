@@ -29,7 +29,7 @@ Environment variables are documented in `.env.example`.
 
 ```sh
 bundle exec rspec     # tests (request + system specs)
-node --experimental-default-type=module --test spec/javascript/flatness_test.mjs  # flatness and local persistence
+node --test spec/javascript/flatness_test.mjs  # flatness and local persistence
 bin/rubocop           # lint (rubocop-rails-omakase)
 npx prettier@3 --check "app/javascript/**/*.js" ".vscode/*.json" "*.md" ".github/**/*.md"  # JS/JSON/Markdown formatting
 bin/brakeman          # security static analysis
