@@ -9,7 +9,7 @@ const emptyState = () => ({
     yearsExperience: "",
     innovation: "",
     flatnessPreference: "",
-    fiveSprints: "",
+    favouriteWeather: "",
   },
   progress: { flatness: 73, meetingsAvoided: 0 },
   achievements: [],
@@ -37,8 +37,8 @@ const validState = (state) =>
   state.profile.innovation.length <= 100 &&
   typeof state.profile.flatnessPreference === "string" &&
   state.profile.flatnessPreference.length <= 100 &&
-  typeof state.profile.fiveSprints === "string" &&
-  state.profile.fiveSprints.length <= 100 &&
+  typeof state.profile.favouriteWeather === "string" &&
+  state.profile.favouriteWeather.length <= 100 &&
   state.progress &&
   Number.isInteger(state.progress.flatness) &&
   state.progress.flatness >= 0 &&

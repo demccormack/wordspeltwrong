@@ -16,7 +16,7 @@ const PROFILE_DEFAULTS = {
   yearsExperience: "Not quantified",
   innovation: "It’s complicated",
   flatnessPreference: "We’ll discover this together",
-  fiveSprints: "Open to emergent forecasts",
+  favouriteWeather: "Open to emergent forecasts",
 };
 
 export default class extends Controller {
@@ -26,7 +26,7 @@ export default class extends Controller {
     "yearsInput",
     "innovationInput",
     "flatnessInput",
-    "sprintsInput",
+    "weatherInput",
     "greeting",
     "flatnessValue",
     "flatnessBar",
@@ -41,7 +41,7 @@ export default class extends Controller {
     "profileYears",
     "profileInnovation",
     "profileFlatness",
-    "profileSprints",
+    "profileWeather",
     "questionStage",
     "questionNumber",
     "questionProgress",
@@ -93,13 +93,13 @@ export default class extends Controller {
       "yearsExperience",
       "innovation",
       "flatnessPreference",
-      "fiveSprints",
+      "favouriteWeather",
     ];
     const targets = [
       this.yearsInputTarget,
       this.innovationInputTarget,
       this.flatnessInputTarget,
-      this.sprintsInputTarget,
+      this.weatherInputTarget,
     ];
     this.answers[fields[this.questionIndex]] =
       targets[this.questionIndex].value;
@@ -255,7 +255,7 @@ export default class extends Controller {
       profile.innovation || PROFILE_DEFAULTS.innovation;
     this.profileFlatnessTarget.textContent =
       profile.flatnessPreference || PROFILE_DEFAULTS.flatnessPreference;
-    this.profileSprintsTarget.textContent =
-      profile.fiveSprints || PROFILE_DEFAULTS.fiveSprints;
+    this.profileWeatherTarget.textContent =
+      profile.favouriteWeather || PROFILE_DEFAULTS.favouriteWeather;
   }
 }
