@@ -170,6 +170,7 @@ Keep account-related email separate from marketing consent. No newsletter subscr
 - Write tests alongside functionality. Test user-visible behaviour rather than implementation details where practical.
 - Format JavaScript, JSON and Markdown with Prettier (default options, as configured in `.vscode/settings.json`) and Ruby with RuboCop. Do not hand-format these files in another style, so diffs stay small.
 - When adding or editing a GitHub Actions workflow, look up and use the latest major version of every action (for example with `gh api repos/<owner>/<action>/releases/latest`) rather than guessing.
+- Squash-merge pull requests by default, unless the maintainer asks for a different merge method.
 - Do not enable auto-merge on a pull request unless the maintainer explicitly asks for it on that PR.
 - Run relevant tests and lint checks before declaring work complete. Report what was actually run, failures, blockers and assumptions.
 - Do not commit secrets, provision paid resources, deploy publicly, send real emails, enable live AI billing or make irreversible external changes without explicit approval.
