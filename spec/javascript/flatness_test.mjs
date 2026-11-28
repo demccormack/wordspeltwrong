@@ -119,6 +119,12 @@ test("visitor state persists and migrates legacy progress", () => {
   assert.equal(migrated.version, 2);
   assert.equal(migrated.progress.legacyFlattenings, 2);
   assert.deepEqual(VisitorStore.load(), migrated);
+  state.version = 1;
+  saved = JSON.stringify(state);
+  window.localStorage.setItem = () => {
+    throw new Error("storage unavailable");
+  };
+  assert.equal(VisitorStore.load().migrationPending, true);
   VisitorStore.reset();
   assert.equal(VisitorStore.load(), null);
 });

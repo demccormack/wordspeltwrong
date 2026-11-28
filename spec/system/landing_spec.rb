@@ -95,6 +95,28 @@ RSpec.describe "Landing page", type: :system do
     expect(page).to have_content("131 events", count: 1)
   end
 
+  it "keeps progress and resets in sync across open tabs" do
+    visit root_path
+    click_button "✨ Get started ✨"
+    click_button "Continue anonymously"
+    3.times { click_button "Continue →" }
+    click_button "✨ Align me with the organisation ✨"
+
+    other_tab = window_opened_by { page.execute_script("window.open('/')") }
+    within_window other_tab do
+      expect(page).to have_content("730.00 mPc")
+      click_button "Flatten by 1%"
+      expect(page).to have_content("732.70 mPc")
+    end
+    expect(page).to have_content("732.70 mPc")
+    expect(page).to have_button("Flatten by 1%", disabled: true)
+    within_window other_tab do
+      click_button "My profile"
+      click_button "Reset local progress"
+    end
+    expect(page).to have_button("✨ Get started ✨")
+  end
+
   it "continues when saved browser state is corrupt or from an older version" do
     visit root_path
     page.execute_script("localStorage.setItem('wordspeltwrong.visitor', '{broken')")

@@ -100,7 +100,9 @@ export const VisitorStore = {
           legacyFlattenings: Math.max(old.flatness - 73, old.meetingsAvoided),
           meetingsAvoided: old.meetingsAvoided,
         };
-        if (validState(state)) this.save(state);
+        if (validState(state) && !this.save(state)) {
+          Object.defineProperty(state, "migrationPending", { value: true });
+        }
       }
       if (!validState(state)) {
         storage.removeItem(STORAGE_KEY);

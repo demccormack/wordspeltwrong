@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import { VisitorStore } from "lib/visitor_store";
+import { STORAGE_KEY, VisitorStore } from "lib/visitor_store";
 import {
   canFlatten,
   classification,
@@ -67,7 +67,12 @@ export default class extends Controller {
 
   connect() {
     this.state = VisitorStore.load() || VisitorStore.create();
-    this.storageFailed = false;
+    this.storageFailed = Boolean(this.state.migrationPending);
+    if (this.storageFailed) {
+      this.addNotification(
+        "Your progress could not be saved in this browser and may be lost when you leave.",
+      );
+    }
     if (this.state.onboardingComplete) {
       this.renderProfile();
       this.renderDashboard();
@@ -76,12 +81,18 @@ export default class extends Controller {
       this.showScreen("welcome");
     }
     this.refreshTimer = window.setInterval(() => {
-      if (this.state.onboardingComplete) this.renderDashboard();
+      if (this.state.onboardingComplete) this.syncFromStorage();
     }, 60_000);
+    this.storageListener = (event) => {
+      if (event.key === STORAGE_KEY || event.key === null)
+        this.syncFromStorage();
+    };
+    window.addEventListener("storage", this.storageListener);
   }
 
   disconnect() {
     window.clearInterval(this.refreshTimer);
+    window.removeEventListener("storage", this.storageListener);
   }
 
   start() {
@@ -254,6 +265,27 @@ export default class extends Controller {
       );
     }
     this.storageFailed = true;
+  }
+
+  syncFromStorage() {
+    if (this.storageFailed) return;
+    const saved = VisitorStore.load();
+    if (!saved) {
+      this.state = VisitorStore.create();
+      this.flatnessImprovementTarget.textContent = "";
+      this.element.querySelectorAll("form").forEach((form) => form.reset());
+      this.showScreen("welcome");
+      return;
+    }
+    const wasOnboarded = this.state.onboardingComplete;
+    this.state = saved;
+    if (saved.onboardingComplete) {
+      this.renderProfile();
+      this.renderDashboard();
+      if (!wasOnboarded) this.showScreen("dashboard");
+    } else {
+      this.showScreen("welcome");
+    }
   }
 
   accountForEntropy(now = Date.now()) {
