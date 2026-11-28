@@ -212,6 +212,7 @@ export default class extends Controller {
     VisitorStore.reset();
     this.state = VisitorStore.create();
     this.storageFailed = false;
+    this.flatnessImprovementTarget.textContent = "";
     this.element.querySelectorAll("form").forEach((form) => form.reset());
     this.showScreen("welcome");
   }
