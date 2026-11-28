@@ -1,12 +1,171 @@
 <% content_for :title, "wordspeltwrong.io | 1% flatter every day" %>
-<section class="text-center">
-  <h1 class="text-4xl font-extrabold tracking-tight sm:text-6xl">
-    <span class="gradient-text">1% flatter</span> every day.
-  </h1>
-  <p class="mx-auto mt-6 max-w-2xl text-lg text-slate-600">
-    The platform for organisations ready to unlock their full potential by having less of it.
-  </p>
-  <div class="mt-8 flex justify-center">
-    <%= render "components/button", label: "✨ Get started ✨", href: "#main" %>
-  </div>
-</section>
+<div data-controller="experience celebration" data-action="experience:welcome->celebration#fire">
+  <section data-experience-target="screen" data-experience-screen-name="welcome" class="py-8 text-center sm:py-12">
+    <p class="mb-4 inline-flex rounded-full border border-brand-100 bg-white px-4 py-2 text-sm font-semibold text-brand-700 shadow-sm">
+      ✨ Your people-first, people-less platform
+    </p>
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-6xl">
+      <span class="gradient-text">1% flatter</span> every day.
+    </h1>
+    <p class="mx-auto mt-6 max-w-2xl text-lg text-slate-600">
+      The platform for individuals and organisations ready to synergise their potential with impactful change.
+    </p>
+    <div class="mx-auto mt-8 w-fit">
+      <button type="button" class="btn-primary" data-action="experience#start">
+        ✨ Get started ✨
+      </button>
+      <p class="mt-4 w-0 min-w-full text-sm text-slate-500">No account. No email. Infinite possibilities.</p>
+    </div>
+  </section>
+
+  <section data-experience-target="screen" data-experience-screen-name="name" hidden class="mx-auto max-w-xl">
+    <div class="mb-6 flex items-center justify-between text-sm font-semibold text-brand-700">
+      <span>Personalisation journey</span><span>Step 1 of 5</span>
+    </div>
+    <div class="mb-8 h-2 overflow-hidden rounded-full bg-brand-100" role="progressbar" aria-label="Onboarding progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20">
+      <div class="h-full w-1/5 rounded-full bg-gradient-to-r from-brand-600 to-flat-500"></div>
+    </div>
+    <div class="card">
+      <h1 class="text-3xl font-extrabold tracking-tight">First, what should we call you?</h1>
+      <p class="mt-2 text-slate-600">A first name, a pseudonym, or absolutely nothing. Your call, stakeholder.</p>
+      <form class="mt-6" data-action="submit->experience#continueOnboarding">
+        <label for="visitor-name" class="mb-2 block font-semibold">Your preferred name <span class="font-normal text-slate-500">(optional)</span></label>
+        <input id="visitor-name" data-experience-target="nameInput" maxlength="40" autocomplete="given-name" class="w-full rounded-xl border border-brand-100 px-4 py-3 focus:border-brand-500 focus:outline-2 focus:outline-brand-500" placeholder="e.g. Alex">
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+          <button type="submit" class="btn-primary">Continue to alignment →</button>
+          <button type="button" class="btn-secondary" data-action="experience#continueAnonymously">Continue anonymously</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section data-experience-target="screen" data-experience-screen-name="questions" hidden class="mx-auto max-w-2xl">
+    <div class="mb-6 flex items-center justify-between text-sm font-semibold text-brand-700">
+      <span>Personalisation journey</span><span data-experience-target="questionNumber">Step 2 of 5</span>
+    </div>
+    <div class="mb-8 h-2 overflow-hidden rounded-full bg-brand-100" role="progressbar" aria-label="Onboarding progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" data-experience-target="questionProgress">
+      <div class="h-full w-2/5 rounded-full bg-gradient-to-r from-brand-600 to-flat-500" data-experience-target="questionProgressFill"></div>
+    </div>
+    <div class="card">
+      <p class="mb-6 text-slate-600">Every answer is optional and stays in this browser.</p>
+      <form data-action="submit->experience#answerQuestion">
+        <div data-experience-target="questionStage" data-question-index="0">
+          <h1 class="mb-6 min-h-[3.75em] text-3xl font-extrabold leading-tight tracking-tight text-brand-700 sm:min-h-[2.5em] sm:text-5xl" data-experience-target="welcomeName">We're so glad you're here.</h1>
+          <label for="years-experience" class="mb-2 block text-lg font-semibold">How many years of experience do you have being yourself?</label>
+          <select id="years-experience" data-experience-target="yearsInput" class="w-full rounded-xl border border-brand-100 bg-white px-4 py-3">
+            <option value="">Prefer not to quantify my journey</option>
+            <option>0–5 years</option><option>6–10 years</option><option>11–20 years</option><option>21+ years</option>
+          </select>
+        </div>
+        <div data-experience-target="questionStage" data-question-index="1" hidden>
+          <h1 class="mb-6 min-h-[3.75em] text-3xl font-extrabold leading-tight tracking-tight text-brand-700 sm:min-h-[2.5em] sm:text-5xl">Thank you for trusting us, it means a lot.</h1>
+          <label for="innovation" class="mb-2 block text-lg font-semibold">Your relationship with innovation?</label>
+          <select id="innovation" data-experience-target="innovationInput" class="w-full rounded-xl border border-brand-100 bg-white px-4 py-3">
+            <option value="">It’s complicated</option><option>We’re seeing other frameworks</option><option>Innovation is a mindset (and a slide deck)</option><option>We’ve always done it this way, disruptively</option>
+          </select>
+        </div>
+        <div data-experience-target="questionStage" data-question-index="2" hidden>
+          <h1 class="mb-6 min-h-[3.75em] text-3xl font-extrabold leading-tight tracking-tight text-brand-700 sm:min-h-[2.5em] sm:text-5xl">We'll take it from here, together.</h1>
+          <label for="flatness" class="mb-2 block text-lg font-semibold">Preferred level of organisational flatness?</label>
+          <select id="flatness" data-experience-target="flatnessInput" class="w-full rounded-xl border border-brand-100 bg-white px-4 py-3">
+            <option value="">We’ll discover this together</option><option>Gently horizontal</option><option>Strategically pancake-adjacent</option><option>So flat we’ve removed the concept of “up”</option>
+          </select>
+        </div>
+        <div data-experience-target="questionStage" data-question-index="3" hidden>
+          <h1 class="mb-6 min-h-[3.75em] text-3xl font-extrabold leading-tight tracking-tight text-brand-700 sm:min-h-[2.5em] sm:text-5xl">We love your commitment to a flatter future.</h1>
+          <label for="weather" class="mb-2 block text-lg font-semibold">What is your favourite weather?</label>
+          <select id="weather" data-experience-target="weatherInput" class="w-full rounded-xl border border-brand-100 bg-white px-4 py-3">
+            <option value="">Open to emergent forecasts</option><option>Partly cloudy with a chance of synergy</option><option>Sunny with scattered stakeholders</option><option>Fog, but make it transparent</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary mt-6 w-full sm:w-auto" data-experience-target="questionContinue">Continue →</button>
+      </form>
+    </div>
+  </section>
+
+  <section data-experience-target="screen" data-experience-screen-name="dashboard" hidden>
+    <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="font-semibold text-flat-500">Your organisational overview</p>
+        <h1 class="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">Welcome, <span data-experience-target="greeting">Stakeholder</span> 👋</h1>
+        <p class="mt-2 text-slate-600">Your potential is thriving within clearly defined parameters.</p>
+      </div>
+      <nav aria-label="Your workspace" class="flex gap-2">
+        <button type="button" class="btn-secondary px-4 py-2" data-action="experience#showDashboard">Dashboard</button>
+        <button type="button" class="btn-secondary px-4 py-2" data-action="experience#showProfile">My profile</button>
+      </nav>
+    </div>
+    <div class="mb-6 rounded-2xl border border-flat-500/20 bg-gradient-to-r from-brand-700 to-flat-500 p-6 text-white shadow-glow">
+      <p class="text-sm font-semibold uppercase tracking-widest text-white/80">Our north star, rotated 90 degrees</p>
+      <p class="mt-2 text-3xl font-extrabold">1% flatter every day.</p>
+      <p class="mt-2 text-white/85">Today’s strategic priority: take one small, joyful step forward.</p>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-3">
+      <article class="card">
+        <p class="text-sm font-semibold text-slate-500">Organisational flatness</p>
+        <p class="mt-2 text-4xl font-extrabold text-brand-700"><span data-experience-target="flatnessValue">73</span><span class="text-2xl">%</span></p>
+        <div class="mt-4 h-3 overflow-hidden rounded-full bg-brand-100" role="progressbar" aria-label="Organisational flatness" aria-valuemin="0" aria-valuemax="100" data-experience-target="flatnessBar">
+          <div class="h-full rounded-full bg-gradient-to-r from-brand-600 to-flat-500" data-experience-target="flatnessFill" style="width: 73%"></div>
+        </div>
+      </article>
+      <article class="card">
+        <p class="text-sm font-semibold text-slate-500">Stakeholder alignment</p>
+        <p class="mt-2 text-4xl font-extrabold text-flat-500">∞<span class="text-xl">%</span></p>
+        <p class="mt-2 text-sm text-slate-500">Measured in mutually supportive nods.</p>
+      </article>
+      <article class="card">
+        <p class="text-sm font-semibold text-slate-500">Meetings avoided</p>
+        <p class="mt-2 text-4xl font-extrabold text-brand-700"><span data-experience-target="meetingsValue">0</span></p>
+        <p class="mt-2 text-sm text-slate-500">We scheduled a meeting to celebrate.</p>
+      </article>
+    </div>
+    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+      <section class="card">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold">Flatten the hierarchy</h2>
+            <p class="mt-1 text-slate-600">One decisive click. A slightly more horizontal tomorrow.</p>
+          </div>
+          <button type="button" class="btn-primary" data-action="experience#flatten">Flatten by 1%</button>
+        </div>
+        <div class="mt-5" data-experience-target="notification" aria-live="polite"></div>
+        <h3 class="mt-5 font-bold">Recent strategic updates</h3>
+        <ul class="mt-3 space-y-3" data-experience-target="notifications"></ul>
+      </section>
+      <section class="card">
+        <div class="flex items-center justify-between gap-4">
+          <div><h2 class="text-xl font-bold">Your achievements</h2><p class="mt-1 text-slate-600">Recognition for your commitment to the journey.</p></div>
+          <span class="rounded-full bg-sparkle/20 px-3 py-1 text-sm font-bold text-amber-700" data-experience-target="achievementCount">0 earned</span>
+        </div>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2" data-experience-target="achievements"></div>
+      </section>
+    </div>
+    <p class="mt-6 text-center text-sm text-slate-500">Your progress is saved only in this browser. It may be lost if you clear your browser data.</p>
+  </section>
+
+  <section data-experience-target="screen" data-experience-screen-name="profile" hidden class="mx-auto max-w-3xl">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div><p class="font-semibold text-flat-500">People & culture</p><h1 class="mt-1 text-3xl font-extrabold">Your stakeholder profile</h1></div>
+      <button type="button" class="btn-secondary" data-action="experience#showDashboard">← Back to dashboard</button>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2">
+      <section class="card">
+        <h2 class="text-xl font-bold">Your organisational identity</h2>
+        <dl class="mt-4 space-y-4">
+          <div><dt class="text-sm font-semibold text-slate-500">Preferred name</dt><dd class="mt-1 font-medium" data-experience-target="profileName">Anonymous Stakeholder</dd></div>
+          <div><dt class="text-sm font-semibold text-slate-500">Current role</dt><dd class="mt-1 font-medium" data-experience-target="role">Founding Stakeholder</dd></div>
+          <div><dt class="text-sm font-semibold text-slate-500">Experience being yourself</dt><dd class="mt-1 font-medium" data-experience-target="profileYears">Not quantified</dd></div>
+          <div><dt class="text-sm font-semibold text-slate-500">Relationship with innovation</dt><dd class="mt-1 font-medium" data-experience-target="profileInnovation">It’s complicated</dd></div>
+          <div><dt class="text-sm font-semibold text-slate-500">Preferred flatness</dt><dd class="mt-1 font-medium" data-experience-target="profileFlatness">We’ll discover this together</dd></div>
+          <div><dt class="text-sm font-semibold text-slate-500">Favourite weather</dt><dd class="mt-1 font-medium" data-experience-target="profileWeather">Open to emergent forecasts</dd></div>
+        </dl>
+      </section>
+      <section class="card">
+        <h2 class="text-xl font-bold">Local progress settings</h2>
+        <p class="mt-2 text-slate-600">Your profile and achievements are stored on this device only. Nothing is sent to our servers.</p>
+        <button type="button" class="btn-secondary mt-6 border-rose-200 text-rose-700 hover:bg-rose-50" data-action="experience#reset" data-turbo="false">Reset local progress</button>
+        <p class="mt-3 text-sm text-slate-500">This clears your progress from this browser. You can start again whenever you like.</p>
+      </section>
+    </div>
+  </section>
+</div>

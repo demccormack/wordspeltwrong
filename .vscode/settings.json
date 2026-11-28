@@ -7,6 +7,9 @@
   "[ruby]": {
     "editor.defaultFormatter": "Shopify.ruby-lsp"
   },
+  "[javascript][json][jsonc][markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "rubyLsp.formatter": "rubocop",
   "rubyLsp.linters": ["rubocop"],
   "files.associations": {

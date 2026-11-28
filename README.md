@@ -1,6 +1,6 @@
 # wordspeltwrong.io
 
-Satire as a Service. *1% flatter every day.*
+Satire as a Service. _1% flatter every day._
 
 Rails 8.1 monolith with PostgreSQL, Hotwire (Turbo + Stimulus), Tailwind CSS and importmaps (no Node required).
 
@@ -22,6 +22,7 @@ Environment variables are documented in `.env.example`.
 ```sh
 bundle exec rspec     # tests (request + system specs)
 bin/rubocop           # lint (rubocop-rails-omakase)
+npx prettier@3 --check "app/javascript/**/*.js" ".vscode/*.json" "*.md" ".github/**/*.md"  # JS/JSON/Markdown formatting
 bin/brakeman          # security static analysis
 bin/bundler-audit     # gem vulnerabilities
 bin/importmap audit   # JS vulnerabilities
@@ -31,7 +32,7 @@ CI (GitHub Actions) runs all of the above on every pull request.
 
 ## Editor
 
-`.vscode/` contains recommended extensions and settings (auto-save on focus change, format and lint on save).
+`.vscode/` contains recommended extensions and settings (auto-save on focus change, format and lint on save). Prettier formats JavaScript, JSON and Markdown; RuboCop formats Ruby.
 
 ## UI building blocks
 
