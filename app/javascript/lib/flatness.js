@@ -21,7 +21,10 @@ export function effectiveCount(progress, now = Date.now()) {
 }
 
 export function flatness(count) {
-  return CREPE_LIMIT - Math.exp(LOG_INITIAL_THICKNESS + count * LOG_DECAY);
+  return Math.min(
+    CREPE_LIMIT - Number.EPSILON * 512,
+    CREPE_LIMIT - Math.exp(LOG_INITIAL_THICKNESS + count * LOG_DECAY),
+  );
 }
 
 function scientific(logValue) {
@@ -42,7 +45,8 @@ export function formatFlatness(count) {
 }
 
 export function formatImprovement(count) {
-  const logImprovement = LOG_INITIAL_THICKNESS + count * LOG_DECAY + Math.log(0.01);
+  const logImprovement =
+    LOG_INITIAL_THICKNESS + count * LOG_DECAY + Math.log(0.01);
   const improvement = Math.exp(logImprovement);
   if (!Number.isFinite(improvement) || improvement < 0.01)
     return scientific(logImprovement);

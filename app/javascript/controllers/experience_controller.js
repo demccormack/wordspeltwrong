@@ -67,6 +67,7 @@ export default class extends Controller {
 
   connect() {
     this.state = VisitorStore.load() || VisitorStore.create();
+    this.storageFailed = false;
     if (this.state.onboardingComplete) {
       this.renderProfile();
       this.renderDashboard();
@@ -146,11 +147,7 @@ export default class extends Controller {
     this.addNotification(
       "Welcome aboard. Your role is Founding Stakeholder; your reporting line is still under review.",
     );
-    if (!VisitorStore.save(this.state)) {
-      this.addNotification(
-        "Your progress could not be saved in this browser and may be lost when you leave.",
-      );
-    }
+    this.persistState();
     this.renderProfile();
     this.renderDashboard();
     this.showScreen("dashboard");
@@ -162,7 +159,7 @@ export default class extends Controller {
   flatten() {
     if (!this.state.onboardingComplete) return;
 
-    this.state = VisitorStore.load() || this.state;
+    if (!this.storageFailed) this.state = VisitorStore.load() || this.state;
     const now = new Date();
     this.accountForEntropy(now.getTime());
     if (!canFlatten(this.state.progress, now)) {
@@ -194,7 +191,7 @@ export default class extends Controller {
         "Achievement unlocked: 1% Flatter. The organisation has noticed your strategic absence.",
       );
     }
-    VisitorStore.save(this.state);
+    this.persistState();
     this.renderDashboard();
     this.element.dispatchEvent(
       new CustomEvent("experience:flattened", { bubbles: true }),
@@ -214,6 +211,7 @@ export default class extends Controller {
   reset() {
     VisitorStore.reset();
     this.state = VisitorStore.create();
+    this.storageFailed = false;
     this.element.querySelectorAll("form").forEach((form) => form.reset());
     this.showScreen("welcome");
   }
@@ -244,6 +242,19 @@ export default class extends Controller {
     this.state.notifications = this.state.notifications.slice(0, 4);
   }
 
+  persistState() {
+    if (VisitorStore.save(this.state)) {
+      this.storageFailed = false;
+      return;
+    }
+    if (!this.storageFailed) {
+      this.addNotification(
+        "Your progress could not be saved in this browser and may be lost when you leave.",
+      );
+    }
+    this.storageFailed = true;
+  }
+
   accountForEntropy(now = Date.now()) {
     const progress = this.state.progress;
     const count = entropyCount(progress.establishedAt, now);
@@ -255,10 +266,10 @@ export default class extends Controller {
       );
       const current = classification(effectiveCount(progress, now));
       this.addNotification(
-        `Your organisation has experienced spontaneous hierarchical regrowth in accordance with the Law of Hierarchical Entropy (${count - progress.observedEntropy} event${count - progress.observedEntropy === 1 ? "" : "s"}).${previous !== current ? ` Its maturity classification is now ${current}.` : ""}`,
+        `Your organisation has experienced spontaneous hierarchical regrowth in accordance with the Law of Hierarchical Entropy (${count - progress.observedEntropy} event${count - progress.observedEntropy === 1 ? "" : "s"}), reducing organisational flatness.${previous !== current ? ` Its maturity classification is now ${current}.` : ""}`,
       );
       progress.observedEntropy = count;
-      VisitorStore.save(this.state);
+      this.persistState();
     }
   }
 

@@ -42,7 +42,10 @@ RSpec.describe "Landing page", type: :system do
     expect(page).to have_content("Your progress is saved only in this browser")
 
     click_button "Flatten by 1%"
-    expect(page).to have_content("74%")
+    expect(page).to have_content("732.70 mPc")
+    expect(page).to have_content("+2.70 mPc")
+    expect(page).to have_button("Flatten by 1%", disabled: true)
+    expect(page).to have_content("Deliberate flattening")
     expect(page).to have_content("1% Flatter")
     click_button "My profile"
     expect(page).to have_content("Taylor")
@@ -53,11 +56,43 @@ RSpec.describe "Landing page", type: :system do
 
     page.refresh
     expect(page).to have_content("Welcome, Taylor")
+    expect(page).to have_content("732.70 mPc")
+    expect(page).to have_button("Flatten by 1%", disabled: true)
+    click_link "Learn about the science behind organisational flatness"
+    expect(page).to have_content("The Science of Flatness")
+    expect(page).to have_content("The Principle of Unbounded Dysfunction")
+    click_link "Back to your organisation"
     click_button "My profile"
     click_button "Reset local progress"
     expect(page).to have_button("✨ Get started ✨")
     page.refresh
     expect(page).to have_button("✨ Get started ✨")
+  end
+
+  it "accounts for entropy on return and celebrates recovery from the bread domain" do
+    visit root_path
+    click_button "✨ Get started ✨"
+    click_button "Continue anonymously"
+    3.times { click_button "Continue →" }
+    click_button "✨ Align me with the organisation ✨"
+
+    page.execute_script(<<~JS)
+      const state = JSON.parse(localStorage.getItem('wordspeltwrong.visitor'));
+      state.progress.establishedAt = new Date(Date.now() - 131 * 7 * 86400000).toISOString();
+      localStorage.setItem('wordspeltwrong.visitor', JSON.stringify(state));
+    JS
+    page.refresh
+    expect(page).to have_content("Ciabatta")
+    expect(page).to have_content("131 events")
+    expect(page).to have_content("Hierarchical Entropy")
+    expect(page).to have_content("-7.29 mPc")
+    click_button "Flatten by 1%"
+    expect(page).to have_content("American pancake")
+    expect(page).to have_content("returned from the bread domain")
+    page.refresh
+    expect(page).to have_content("American pancake")
+    expect(page).to have_button("Flatten by 1%", disabled: true)
+    expect(page).to have_content("131 events", count: 1)
   end
 
   it "continues when saved browser state is corrupt or from an older version" do

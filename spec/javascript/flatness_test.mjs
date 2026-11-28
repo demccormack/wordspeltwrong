@@ -33,8 +33,10 @@ test("asymptotic flatness and unbounded dysfunction", () => {
     [365, 993.11],
     [-100, 262.36],
     [-200, -1015.23],
-  ]) assert.ok(Math.abs(flatness(count) - expected) < 0.01);
+  ])
+    assert.ok(Math.abs(flatness(count) - expected) < 0.01);
   assert.ok(flatness(-1000) < -1000000);
+  assert.ok(flatness(100000) < 1000);
   assert.match(formatFlatness(10000), /^1,000 − /);
   assert.match(formatFlatness(-100000), /^−/);
   assert.match(formatImprovement(100000), /10\^/);
@@ -42,7 +44,10 @@ test("asymptotic flatness and unbounded dysfunction", () => {
 
 test("entropy is based on establishment and actions reverse it exactly", () => {
   const state = progress();
-  assert.equal(entropyCount(state.establishedAt, start + ENTROPY_INTERVAL - 1), 0);
+  assert.equal(
+    entropyCount(state.establishedAt, start + ENTROPY_INTERVAL - 1),
+    0,
+  );
   assert.equal(entropyCount(state.establishedAt, start + ENTROPY_INTERVAL), 1);
   assert.equal(effectiveCount(state, start + 3 * ENTROPY_INTERVAL), -3);
   for (let day = 0; day < 7; day++) {
@@ -51,7 +56,12 @@ test("entropy is based on establishment and actions reverse it exactly", () => {
   }
   assert.equal(effectiveCount(state, start + ENTROPY_INTERVAL), 6);
   assert.equal(recentHistory(state, start + ENTROPY_INTERVAL).length, 8);
-  assert.equal(recentHistory(state, start + 3 * ENTROPY_INTERVAL).filter((event) => event.type === "Hierarchical Entropy").length, 3);
+  assert.equal(
+    recentHistory(state, start + 3 * ENTROPY_INTERVAL).filter(
+      (event) => event.type === "Hierarchical Entropy",
+    ).length,
+    3,
+  );
 });
 
 test("daily restriction and classifications", () => {
@@ -82,13 +92,24 @@ test("daily restriction and classifications", () => {
 
 test("visitor state persists and migrates legacy progress", () => {
   let saved;
-  globalThis.window = { localStorage: {
-    getItem: () => saved,
-    setItem: (_key, value) => { saved = value; },
-    removeItem: () => { saved = null; },
-  } };
+  globalThis.window = {
+    localStorage: {
+      getItem: () => saved,
+      setItem: (_key, value) => {
+        saved = value;
+      },
+      removeItem: () => {
+        saved = null;
+      },
+    },
+  };
   const state = VisitorStore.create(new Date(start));
   state.onboardingComplete = true;
+  state.progress.flattenings.push({
+    at: new Date(start).toISOString(),
+    day: localDay(new Date(start)),
+  });
+  state.progress.observedEntropy = 2;
   assert.ok(VisitorStore.save(state));
   assert.deepEqual(VisitorStore.load(), state);
   state.version = 1;
