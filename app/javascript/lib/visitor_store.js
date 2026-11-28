@@ -1,7 +1,7 @@
 export const STORAGE_KEY = "wordspeltwrong.visitor";
-export const CURRENT_VERSION = 1;
+export const CURRENT_VERSION = 2;
 
-const emptyState = () => ({
+const emptyState = (now = new Date()) => ({
   version: CURRENT_VERSION,
   onboardingComplete: false,
   profile: {
@@ -11,7 +11,13 @@ const emptyState = () => ({
     flatnessPreference: "",
     favouriteWeather: "",
   },
-  progress: { flatness: 73, meetingsAvoided: 0 },
+  progress: {
+    establishedAt: now.toISOString(),
+    legacyFlattenings: 0,
+    flattenings: [],
+    observedEntropy: 0,
+    meetingsAvoided: 0,
+  },
   achievements: [],
   notifications: [],
 });
@@ -40,9 +46,21 @@ const validState = (state) =>
   typeof state.profile.favouriteWeather === "string" &&
   state.profile.favouriteWeather.length <= 100 &&
   state.progress &&
-  Number.isInteger(state.progress.flatness) &&
-  state.progress.flatness >= 0 &&
-  state.progress.flatness <= 100 &&
+  typeof state.progress.establishedAt === "string" &&
+  Number.isFinite(Date.parse(state.progress.establishedAt)) &&
+  Number.isSafeInteger(state.progress.legacyFlattenings) &&
+  state.progress.legacyFlattenings >= 0 &&
+  Array.isArray(state.progress.flattenings) &&
+  state.progress.flattenings.every(
+    (event) =>
+      event &&
+      typeof event.at === "string" &&
+      Number.isFinite(Date.parse(event.at)) &&
+      typeof event.day === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(event.day),
+  ) &&
+  Number.isSafeInteger(state.progress.observedEntropy) &&
+  state.progress.observedEntropy >= 0 &&
   Number.isInteger(state.progress.meetingsAvoided) &&
   state.progress.meetingsAvoided >= 0 &&
   Array.isArray(state.achievements) &&
@@ -65,12 +83,25 @@ export const VisitorStore = {
     try {
       const raw = storage.getItem(STORAGE_KEY);
       if (!raw) return null;
-      if (raw.length > 10_000) {
-        storage.removeItem(STORAGE_KEY);
-        return null;
-      }
-
       const state = JSON.parse(raw);
+      if (state?.version === 1 && state.progress) {
+        const old = state.progress;
+        if (
+          !Number.isInteger(old.flatness) ||
+          old.flatness < 0 ||
+          old.flatness > 100 ||
+          !Number.isInteger(old.meetingsAvoided) ||
+          old.meetingsAvoided < 0
+        )
+          return null;
+        state.version = CURRENT_VERSION;
+        state.progress = {
+          ...emptyState().progress,
+          legacyFlattenings: Math.max(old.flatness - 73, old.meetingsAvoided),
+          meetingsAvoided: old.meetingsAvoided,
+        };
+        if (validState(state)) this.save(state);
+      }
       if (!validState(state)) {
         storage.removeItem(STORAGE_KEY);
         return null;
