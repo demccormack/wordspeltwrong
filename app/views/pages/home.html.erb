@@ -1,5 +1,5 @@
 <% content_for :title, "wordspeltwrong.io | 1% flatter every day" %>
-<div data-controller="experience celebration" data-action="experience:welcome->celebration#fire">
+<div data-controller="experience celebration" data-action="experience:welcome->celebration#fire experience:flattened->celebration#fire">
   <section data-experience-target="screen" data-experience-screen-name="welcome" class="py-8 text-center sm:py-12">
     <p class="mb-4 inline-flex rounded-full border border-brand-100 bg-white px-4 py-2 text-sm font-semibold text-brand-700 shadow-sm">
       ✨ Your people-first, people-less platform
@@ -102,9 +102,11 @@
     </div>
     <div class="grid gap-4 sm:grid-cols-3">
       <article class="card">
-        <p class="text-sm font-semibold text-slate-500">Organisational flatness</p>
-        <p class="mt-2 text-4xl font-extrabold text-brand-700"><span data-experience-target="flatnessValue">73</span><span class="text-2xl">%</span></p>
-        <div class="mt-4 h-3 overflow-hidden rounded-full bg-brand-100" role="progressbar" aria-label="Organisational flatness" aria-valuemin="0" aria-valuemax="100" data-experience-target="flatnessBar">
+        <p class="text-sm font-semibold text-slate-500">Organisational Flatness Index <%= link_to "ⓘ", science_of_flatness_path, title: "Learn about the science behind organisational flatness", aria: { label: "Learn about the science behind organisational flatness" }, class: "text-brand-700 underline" %></p>
+        <p class="mt-2 break-words text-3xl font-extrabold text-brand-700"><span data-experience-target="flatnessValue">730.00</span> <span class="text-xl">mPc</span></p>
+        <p class="mt-2 text-sm font-semibold" data-experience-target="flatnessClassification">British pancake</p>
+        <p class="mt-2 text-sm text-slate-500">Progress towards the Crêpe Limit (1,000 mPc)</p>
+        <div class="mt-4 h-3 overflow-hidden rounded-full bg-brand-100" role="progressbar" aria-label="Progress towards the Crêpe Limit" aria-valuemin="0" aria-valuemax="100" data-experience-target="flatnessBar">
           <div class="h-full rounded-full bg-gradient-to-r from-brand-600 to-flat-500" data-experience-target="flatnessFill" style="width: 73%"></div>
         </div>
       </article>
@@ -126,11 +128,16 @@
             <h2 class="text-xl font-bold">Flatten the hierarchy</h2>
             <p class="mt-1 text-slate-600">One decisive click. A slightly more horizontal tomorrow.</p>
           </div>
-          <button type="button" class="btn-primary" data-action="experience#flatten">Flatten by 1%</button>
+          <button type="button" class="btn-primary disabled:cursor-not-allowed disabled:opacity-50" data-action="experience#flatten" data-experience-target="flattenButton">Flatten by 1%</button>
         </div>
+        <p class="mt-3 text-sm text-slate-600">One deliberate flattening per day. Return tomorrow for your next opportunity.</p>
+        <p class="mt-3 text-sm font-semibold text-brand-700" data-experience-target="flatnessImprovement" aria-live="polite"></p>
         <div class="mt-5" data-experience-target="notification" aria-live="polite"></div>
         <h3 class="mt-5 font-bold">Recent strategic updates</h3>
         <ul class="mt-3 space-y-3" data-experience-target="notifications"></ul>
+        <h3 class="mt-5 font-bold">Organisational flatness history</h3>
+        <p class="mt-1 text-sm text-slate-500">The latest deliberate flattening and Hierarchical Entropy events.</p>
+        <ul class="mt-2 space-y-1 text-sm text-slate-600" data-experience-target="flatnessHistory"></ul>
       </section>
       <section class="card">
         <div class="flex items-center justify-between gap-4">

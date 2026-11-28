@@ -79,6 +79,9 @@ jobs:
       - name: Check JavaScript, JSON and Markdown formatting
         run: npx --yes prettier@3 --check "app/javascript/**/*.js" ".vscode/*.json" "*.md" ".github/**/*.md"
 
+      - name: Test flatness and visitor persistence
+        run: node --test spec/javascript/flatness_test.mjs
+
   test:
     runs-on: ubuntu-latest
 

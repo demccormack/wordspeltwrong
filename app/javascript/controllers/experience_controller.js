@@ -1,5 +1,16 @@
 import { Controller } from "@hotwired/stimulus";
-import { VisitorStore } from "lib/visitor_store";
+import { STORAGE_KEY, VisitorStore } from "lib/visitor_store";
+import {
+  canFlatten,
+  classification,
+  effectiveCount,
+  entropyCount,
+  flatness,
+  formatFlatness,
+  formatImprovement,
+  localDay,
+  recentHistory,
+} from "lib/flatness";
 
 const ACHIEVEMENTS = {
   "founding-stakeholder": {
@@ -31,6 +42,10 @@ export default class extends Controller {
     "flatnessValue",
     "flatnessBar",
     "flatnessFill",
+    "flatnessClassification",
+    "flatnessImprovement",
+    "flattenButton",
+    "flatnessHistory",
     "meetingsValue",
     "notification",
     "notifications",
@@ -52,6 +67,7 @@ export default class extends Controller {
 
   connect() {
     this.state = VisitorStore.load() || VisitorStore.create();
+    this.storageFailed = false;
     if (this.state.onboardingComplete) {
       this.renderProfile();
       this.renderDashboard();
@@ -59,6 +75,19 @@ export default class extends Controller {
     } else {
       this.showScreen("welcome");
     }
+    this.refreshTimer = window.setInterval(() => {
+      if (this.state.onboardingComplete) this.syncFromStorage();
+    }, 60_000);
+    this.storageListener = (event) => {
+      if (event.key === STORAGE_KEY || event.key === null)
+        this.syncFromStorage();
+    };
+    window.addEventListener("storage", this.storageListener);
+  }
+
+  disconnect() {
+    window.clearInterval(this.refreshTimer);
+    window.removeEventListener("storage", this.storageListener);
   }
 
   start() {
@@ -124,7 +153,7 @@ export default class extends Controller {
     this.addNotification(
       "Welcome aboard. Your role is Founding Stakeholder; your reporting line is still under review.",
     );
-    VisitorStore.save(this.state);
+    this.persistState();
     this.renderProfile();
     this.renderDashboard();
     this.showScreen("dashboard");
@@ -136,23 +165,43 @@ export default class extends Controller {
   flatten() {
     if (!this.state.onboardingComplete) return;
 
-    this.state.progress.flatness = Math.min(
-      100,
-      this.state.progress.flatness + 1,
-    );
+    if (!this.storageFailed) this.state = VisitorStore.load() || this.state;
+    const now = new Date();
+    this.accountForEntropy(now.getTime());
+    if (!canFlatten(this.state.progress, now)) {
+      this.renderDashboard();
+      return;
+    }
+    const before = effectiveCount(this.state.progress, now.getTime());
+    const previousClassification = classification(before);
+    this.state.progress.flattenings.push({
+      at: now.toISOString(),
+      day: localDay(now),
+    });
     this.state.progress.meetingsAvoided += 1;
+    const nextClassification = classification(before + 1);
+    const recovery = flatness(before) < 0 && flatness(before + 1) >= 0;
+    this.flatnessImprovementTarget.textContent = `+${formatImprovement(before)} mPc. Congratulations! You've eliminated 1% of your remaining hierarchical thickness. You're one step closer to the Crêpe Limit.`;
+    if (recovery) {
+      this.addNotification(
+        "A significant organisational milestone: you have returned from the bread domain to the pancake domain.",
+      );
+    } else if (previousClassification !== nextClassification) {
+      this.addNotification(
+        `Organisational milestone: your maturity classification is now ${nextClassification}.`,
+      );
+    }
     if (!this.state.achievements.includes("one-percent-flatter")) {
       this.state.achievements.push("one-percent-flatter");
       this.addNotification(
         "Achievement unlocked: 1% Flatter. The organisation has noticed your strategic absence.",
       );
-    } else {
-      this.addNotification(
-        "Hierarchy reduced by 1%. A new alignment meeting has been proposed.",
-      );
     }
-    VisitorStore.save(this.state);
+    this.persistState();
     this.renderDashboard();
+    this.element.dispatchEvent(
+      new CustomEvent("experience:flattened", { bubbles: true }),
+    );
   }
 
   showDashboard() {
@@ -168,6 +217,8 @@ export default class extends Controller {
   reset() {
     VisitorStore.reset();
     this.state = VisitorStore.create();
+    this.storageFailed = false;
+    this.flatnessImprovementTarget.textContent = "";
     this.element.querySelectorAll("form").forEach((form) => form.reset());
     this.showScreen("welcome");
   }
@@ -198,13 +249,79 @@ export default class extends Controller {
     this.state.notifications = this.state.notifications.slice(0, 4);
   }
 
+  persistState() {
+    if (VisitorStore.save(this.state)) {
+      this.storageFailed = false;
+      return;
+    }
+    if (!this.storageFailed) {
+      this.addNotification(
+        "Your progress could not be saved in this browser and may be lost when you leave.",
+      );
+    }
+    this.storageFailed = true;
+  }
+
+  syncFromStorage() {
+    if (this.storageFailed) return;
+    const saved = VisitorStore.load();
+    if (!saved) {
+      this.state = VisitorStore.create();
+      this.flatnessImprovementTarget.textContent = "";
+      this.element.querySelectorAll("form").forEach((form) => form.reset());
+      this.showScreen("welcome");
+      return;
+    }
+    const wasOnboarded = this.state.onboardingComplete;
+    this.state = saved;
+    if (saved.onboardingComplete) {
+      this.renderProfile();
+      this.renderDashboard();
+      if (!wasOnboarded) this.showScreen("dashboard");
+    } else {
+      this.showScreen("welcome");
+    }
+  }
+
+  accountForEntropy(now = Date.now()) {
+    const progress = this.state.progress;
+    const count = entropyCount(progress.establishedAt, now);
+    if (count > progress.observedEntropy) {
+      const previous = classification(
+        progress.flattenings.length - progress.observedEntropy,
+      );
+      const current = classification(effectiveCount(progress, now));
+      this.addNotification(
+        `Your organisation has experienced spontaneous hierarchical regrowth in accordance with the Law of Hierarchical Entropy (${count - progress.observedEntropy} event${count - progress.observedEntropy === 1 ? "" : "s"}), reducing organisational flatness.${previous !== current ? ` Its maturity classification is now ${current}.` : ""}`,
+      );
+      progress.observedEntropy = count;
+      this.persistState();
+    }
+  }
+
   renderDashboard() {
+    const now = new Date();
+    this.accountForEntropy(now.getTime());
     this.greetingTarget.textContent =
       this.state.profile.firstName || "Stakeholder";
-    const flatness = Math.min(100, Math.max(0, this.state.progress.flatness));
-    this.flatnessValueTarget.textContent = flatness;
-    this.flatnessBarTarget.setAttribute("aria-valuenow", flatness);
-    this.flatnessFillTarget.style.width = `${flatness}%`;
+    const count = effectiveCount(this.state.progress, now.getTime());
+    const value = flatness(count);
+    const percentage = Math.min(100, Math.max(0, value / 10));
+    this.flatnessValueTarget.textContent = formatFlatness(count);
+    this.flatnessClassificationTarget.textContent = classification(count);
+    this.flatnessBarTarget.setAttribute("aria-valuenow", percentage);
+    this.flatnessBarTarget.setAttribute(
+      "aria-valuetext",
+      `${formatFlatness(count)} mPc; ${classification(count)}`,
+    );
+    this.flatnessFillTarget.style.width = `${percentage}%`;
+    this.flattenButtonTarget.disabled = !canFlatten(this.state.progress, now);
+    this.flatnessHistoryTarget.replaceChildren();
+    recentHistory(this.state.progress, now.getTime()).forEach((event) => {
+      const item = document.createElement("li");
+      item.textContent = `${new Date(event.at).toLocaleDateString("en-GB")} — ${event.type}`;
+      this.flatnessHistoryTarget.append(item);
+    });
     this.meetingsValueTarget.textContent =
       this.state.progress.meetingsAvoided || 0;
     this.notificationTarget.replaceChildren();

@@ -29,6 +29,7 @@ Environment variables are documented in `.env.example`.
 
 ```sh
 bundle exec rspec     # tests (request + system specs)
+node --test spec/javascript/flatness_test.mjs  # flatness and local persistence
 bin/rubocop           # lint (rubocop-rails-omakase)
 npx prettier@3 --check "app/javascript/**/*.js" ".vscode/*.json" "*.md" ".github/**/*.md"  # JS/JSON/Markdown formatting
 bin/brakeman          # security static analysis
@@ -36,7 +37,8 @@ bin/bundler-audit     # gem vulnerabilities
 bin/importmap audit   # JS vulnerabilities
 ```
 
-CI (GitHub Actions) runs all of the above on every pull request.
+CI (GitHub Actions) runs these checks on every pull request. The standalone
+flatness tests additionally require Node.
 
 ## Editor
 
