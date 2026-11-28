@@ -23,4 +23,4 @@ module CapybaraChromeReset
   end
 end
 
-Capybara::Selenium::Driver.prepend(CapybaraChromeReset)
+Capybara::Selenium::Driver::ChromeDriver.prepend(CapybaraChromeReset)
